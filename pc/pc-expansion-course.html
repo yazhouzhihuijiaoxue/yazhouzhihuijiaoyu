@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>临床&科研拓展课 - 牙周智慧教学平台</title>
+    
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    
+    <!-- Element Plus -->
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
+    <script src="https://unpkg.com/element-plus"></script>
+    
+    <!-- 全局样式 -->
+    <link rel="stylesheet" href="../styles/global.css">
+    
+    <style>
+        .expansion-course {
+            padding: 0;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+        }
+        
+        /* 页面头部 */
+        .page-header {
+            background: white;
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .page-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+        
+        .page-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        /* 课程表格容器 */
+        .course-container {
+            padding: 24px;
+        }
+        
+        .course-table {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        /* 表格头部 */
+        .table-header {
+            display: grid;
+            grid-template-columns: 45% 15% 15% 25%;
+            background: #F5F7FA;
+            font-weight: bold;
+            color: #2D3E50;
+            font-size: 14px;
+            height: 48px;
+            align-items: center;
+            border-bottom: 1px solid #E0E0E0;
+        }
+        
+        .table-header-cell {
+            padding: 0 16px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+        
+        .table-header-cell:nth-child(1) {
+            justify-content: flex-start;
+            text-align: left;
+        }
+        
+        .table-header-cell:nth-child(2),
+        .table-header-cell:nth-child(3),
+        .table-header-cell:nth-child(4) {
+            justify-content: center;
+            text-align: center;
+        }
+        
+        /* 表格行 */
+        .table-row {
+            display: grid;
+            grid-template-columns: 45% 15% 15% 25%;
+            height: 56px;
+            align-items: center;
+            border-bottom: 1px solid #E0E0E0;
+            transition: background-color 0.3s ease;
+            background: #FFFFFF;
+        }
+        
+        .table-row:hover {
+            background-color: #F5F7FA;
+        }
+        
+        .table-row:last-child {
+            border-bottom: none;
+        }
+        
+        .table-cell {
+            padding: 0 16px;
+            font-size: 14px;
+            color: #2D3E50;
+        }
+        
+        .table-cell:nth-child(1) {
+            justify-content: flex-start;
+            text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            line-height: 1.4;
+            max-height: 2.8em;
+        }
+        
+        .table-cell:nth-child(2),
+        .table-cell:nth-child(3),
+        .table-cell:nth-child(4) {
+            justify-content: center;
+            text-align: center;
+        }
+        
+        /* 待定状态样式 */
+        .meeting-link.pending {
+            color: #B0BEC5;
+            font-style: italic;
+            cursor: default;
+        }
+        
+        .meeting-link.pending:hover {
+            text-decoration: none;
+        }
+        
+        /* 会议号链接样式 */
+        .meeting-link {
+            color: #1890FF;
+            cursor: pointer;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .meeting-link:hover {
+            color: #096DD9;
+            text-decoration: underline;
+        }
+        
+        .meeting-link.pending {
+            color: var(--text-secondary);
+            cursor: default;
+        }
+        
+        .meeting-link.pending:hover {
+            text-decoration: none;
+        }
+        
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 24px;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .table-header,
+            .table-row {
+                grid-template-columns: 1fr;
+                height: auto;
+                padding: 12px 16px;
+            }
+            
+            .table-header-cell,
+            .table-cell {
+                justify-content: flex-start;
+                text-align: left;
+                padding: 4px 0;
+            }
+            
+            .table-header-cell:nth-child(1)::before {
+                content: "课程名称：";
+                font-weight: bold;
+            }
+            
+            .table-cell:nth-child(2)::before {
+                content: "时间：";
+                font-weight: bold;
+            }
+            
+            .table-cell:nth-child(3)::before {
+                content: "主讲人：";
+                font-weight: bold;
+            }
+            
+            .table-cell:nth-child(4)::before {
+                content: "会议号：";
+                font-weight: bold;
+            }
+        }
+        
+        /* 切换按钮样式 */
+        .tab-switcher {
+            padding: 16px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .tab-button {
+            padding: 8px 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #E0E0E0;
+            background: #F5F7FA;
+            color: #666666;
+        }
+        
+        .tab-button.active {
+            background: #00C48C;
+            color: #FFFFFF;
+            border-color: #00C48C;
+            font-weight: 500;
+        }
+        
+        .tab-button:not(:last-child) {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="expansion-course">
+            <!-- 页面内容 -->
+            <div class="student-content">
+                <!-- 页面头部 -->
+                <div class="page-header">
+                    <h1 class="page-title">临床&科研拓展课</h1>
+                    <p class="page-subtitle">每月推送临床拓展课程，助力专业成长</p>
+                </div>
+                
+                <!-- 切换按钮 -->
+                <div class="tab-switcher">
+                    <div 
+                        class="tab-button" 
+                        :class="{ active: activeTab === 'clinical' }"
+                        @click="switchTab('clinical')"
+                    >
+                        临床拓展课
+                    </div>
+                    <div 
+                        class="tab-button" 
+                        :class="{ active: activeTab === 'research' }"
+                        @click="switchTab('research')"
+                    >
+                        科研拓展课
+                    </div>
+                </div>
+                
+                <!-- 临床拓展课内容 -->
+                <div v-if="activeTab === 'clinical'" class="course-container">
+                    <div class="course-table">
+                        <!-- 表格头部 -->
+                        <div class="table-header">
+                            <div class="table-header-cell">临床拓展课</div>
+                            <div class="table-header-cell">时间</div>
+                            <div class="table-header-cell">主讲人</div>
+                            <div class="table-header-cell">会议号</div>
+                        </div>
+                        
+                        <!-- 表格内容 -->
+                        <div v-if="clinicalCourses.length > 0">
+                            <div 
+                                class="table-row" 
+                                v-for="course in clinicalCourses" 
+                                :key="course.id"
+                            >
+                                <div class="table-cell">{{ course.name }}</div>
+                                <div class="table-cell">{{ course.time }}</div>
+                                <div class="table-cell">{{ course.lecturer }}</div>
+                                <div class="table-cell">
+                                    <span 
+                                        v-if="course.meetingId && course.meetingId !== '待定'"
+                                        class="meeting-link"
+                                        @click="joinMeeting(course.meetingId)"
+                                    >
+                                        {{ course.meetingId }}
+                                    </span>
+                                    <span 
+                                        v-else
+                                        class="meeting-link pending"
+                                    >
+                                        待定
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 空状态 -->
+                        <div v-else class="empty-state">
+                            <div class="empty-state-icon">📚</div>
+                            <h3>暂无课程安排</h3>
+                            <p>请等待管理员发布新的课程信息</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 科研拓展课内容 -->
+                <div v-if="activeTab === 'research'" class="course-container">
+                    <div class="course-table">
+                        <!-- 表格头部 -->
+                        <div class="table-header">
+                            <div class="table-header-cell">科研拓展课</div>
+                            <div class="table-header-cell">时间</div>
+                            <div class="table-header-cell">主讲人</div>
+                            <div class="table-header-cell">地点</div>
+                        </div>
+                        
+                        <!-- 表格内容 -->
+                        <div v-if="researchCourses.length > 0">
+                            <div 
+                                class="table-row" 
+                                v-for="course in researchCourses" 
+                                :key="course.id"
+                            >
+                                <div class="table-cell">{{ course.name }}</div>
+                                <div class="table-cell">{{ course.time }}</div>
+                                <div class="table-cell">{{ course.lecturer }}</div>
+                                <div class="table-cell">
+                                    <span 
+                                        v-if="course.location && course.location !== '待定'"
+                                        class="meeting-link"
+                                    >
+                                        {{ course.location }}
+                                    </span>
+                                    <span 
+                                        v-else
+                                        class="meeting-link pending"
+                                    >
+                                        待定
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 空状态 -->
+                        <div v-else class="empty-state">
+                            <div class="empty-state-icon">📚</div>
+                            <h3>暂无课程安排</h3>
+                            <p>请等待管理员发布新的课程信息</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+        
+        createApp({
+            data() {
+                return {
+                    activeTab: 'clinical', // 默认选中临床拓展课
+                    clinicalCourses: [
+                        {
+                            id: 1,
+                            name: '牙周炎和全身健康',
+                            time: '2026/1/17',
+                            lecturer: '王川',
+                            meetingId: '135-351-786',
+                            status: '已确定'
+                        },
+                        {
+                            id: 2,
+                            name: 'PAOO',
+                            time: '2026/1/24',
+                            lecturer: '席悦',
+                            meetingId: '889-380-586',
+                            status: '已确定'
+                        },
+                        {
+                            id: 3,
+                            name: '牙周系统治疗的临床路径',
+                            time: '2026/2/26',
+                            lecturer: 'XX',
+                            meetingId: '880-478-179',
+                            status: '已确定'
+                        },
+                        {
+                            id: 4,
+                            name: '生物学宽度',
+                            time: '2026/2/28',
+                            lecturer: '宋仕程',
+                            meetingId: '121-118-884',
+                            status: '已确定'
+                        },
+                        {
+                            id: 5,
+                            name: '牙周科相关"感控、急救、执业防护"相关知识',
+                            time: '2026/3/21',
+                            lecturer: '何亮亮',
+                            meetingId: '待定',
+                            status: '待定'
+                        },
+                        {
+                            id: 6,
+                            name: '牙内陷',
+                            time: '2026/3/28',
+                            lecturer: '金瑜',
+                            meetingId: '待定',
+                            status: '待定'
+                        },
+                        {
+                            id: 7,
+                            name: '牙周急症的鉴别诊断及处理',
+                            time: '2026/4/18',
+                            lecturer: '董维理',
+                            meetingId: '待定',
+                            status: '待定'
+                        },
+                        {
+                            id: 8,
+                            name: '待定',
+                            time: '2026/4/25',
+                            lecturer: '徐培人',
+                            meetingId: '待定',
+                            status: '待定'
+                        },
+                        {
+                            id: 9,
+                            name: '牙周炎的伴发病变',
+                            time: '2026/5/16',
+                            lecturer: 'XX',
+                            meetingId: '待定',
+                            status: '待定'
+                        },
+                        {
+                            id: 10,
+                            name: '牙周牙髓联合病变',
+                            time: '2026/5/23',
+                            lecturer: '石琪',
+                            meetingId: '待定',
+                            status: '待定'
+                        }
+                    ],
+                    researchCourses: [
+                        {
+                            id: 1,
+                            name: 'Excessive vigorous exercise impairs cognitive function through a muscle-derived mitochondrial pretender',
+                            time: '2026/1/27',
+                            lecturer: '石俊杰',
+                            location: '实验室会议室',
+                            status: '已确定'
+                        },
+                        {
+                            id: 2,
+                            name: 'Protein UHRF1-mediated dual dysregulation of molecular chaperone GRP78 induces endoplasmic reticulum stress and aggravates diabetic nephropathy',
+                            time: '2026/1/27',
+                            lecturer: '郭一菲',
+                            location: '实验室会议室',
+                            status: '已确定'
+                        },
+                        {
+                            id: 3,
+                            name: 'Complications of guided tissue regeneration',
+                            time: '2026/1/27',
+                            lecturer: '王迪',
+                            location: '实验室会议室',
+                            status: '已确定'
+                        },
+                        {
+                            id: 4,
+                            name: '待定',
+                            time: '2026/3/10',
+                            lecturer: '阮红蕾',
+                            location: '待定',
+                            status: '待定'
+                        },
+                        {
+                            id: 5,
+                            name: '待定',
+                            time: '2026/3/10',
+                            lecturer: '丁嘉艺',
+                            location: '待定',
+                            status: '待定'
+                        },
+                        {
+                            id: 6,
+                            name: '待定',
+                            time: '2026/3/10',
+                            lecturer: '黄思雨',
+                            location: '待定',
+                            status: '待定'
+                        },
+                        {
+                            id: 7,
+                            name: '待定',
+                            time: '2026/3/24',
+                            lecturer: '梁钰',
+                            location: '待定',
+                            status: '待定'
+                        },
+                        {
+                            id: 8,
+                            name: '待定',
+                            time: '2026/3/24',
+                            lecturer: '刘宇',
+                            location: '待定',
+                            status: '待定'
+                        },
+                        {
+                            id: 9,
+                            name: '待定',
+                            time: '2026/3/24',
+                            lecturer: '石琪',
+                            location: '待定',
+                            status: '待定'
+                        },
+                        {
+                            id: 10,
+                            name: '待定',
+                            time: '2026/4/7',
+                            lecturer: '曹文政',
+                            location: '待定',
+                            status: '待定'
+                        },
+                        {
+                            id: 11,
+                            name: '待定',
+                            time: '2026/4/7',
+                            lecturer: '刘鹤宇',
+                            location: '待定',
+                            status: '待定'
+                        },
+                        {
+                            id: 12,
+                            name: '待定',
+                            time: '2026/4/7',
+                            lecturer: '宋仕程',
+                            location: '待定',
+                            status: '待定'
+                        },
+                        {
+                            id: 13,
+                            name: '待定',
+                            time: '2026/4/21',
+                            lecturer: '刘宗帅',
+                            location: '待定',
+                            status: '待定'
+                        },
+                        {
+                            id: 14,
+                            name: '待定',
+                            time: '2026/4/21',
+                            lecturer: '郭咏琳',
+                            location: '待定',
+                            status: '待定'
+                        },
+                        {
+                            id: 15,
+                            name: '待定',
+                            time: '2026/4/21',
+                            lecturer: '席悦',
+                            location: '待定',
+                            status: '待定'
+                        }
+                    ]
+                }
+            },
+            methods: {
+                // 切换标签页
+                switchTab(tab) {
+                    this.activeTab = tab;
+                },
+                
+                // 加入腾讯会议
+                joinMeeting(meetingId) {
+                    // 去除会议号中的"-"符号
+                    const cleanMeetingId = meetingId.replace(/\-/g, '');
+                    
+                    // 构建腾讯会议链接
+                    const meetingUrl = `https://meeting.tencent.com/dm/r/${cleanMeetingId}`;
+                    
+                    // 在新窗口打开会议链接
+                    window.open(meetingUrl, '_blank');
+                    
+                    console.log('加入会议:', meetingId, '链接:', meetingUrl);
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

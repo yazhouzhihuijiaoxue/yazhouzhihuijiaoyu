@@ -1,0 +1,340 @@
+/* 牙周智慧教学平台 - 全局样式规范 */
+/* 设计系统与视觉规范 (Design System & Visual Specs) */
+
+/* ===== 色彩系统 ===== */
+:root {
+  /* 主色调 */
+  --primary-color: #2D3E50;
+  --primary-light: #4A5C6C;
+  --primary-dark: #1A2733;
+  
+  /* 背景色 */
+  --bg-color: #F5F7FA;
+  --bg-card: #FFFFFF;
+  
+  /* 强调色 */
+  --accent-color: #00C48C;
+  --accent-light: #33D2A3;
+  --accent-dark: #009966;
+  
+  /* 辅助色 */
+  --success-color: #00C48C;
+  --warning-color: #FFA500;
+  --error-color: #FF4D4F;
+  --info-color: #4ECDC4;
+  
+  /* 中性色 */
+  --text-primary: #2D3E50;
+  --text-secondary: #666666;
+  --text-tertiary: #999999;
+  --border-color: #E8E8E8;
+  --disabled-color: #CCCCCC;
+}
+
+/* ===== 基础重置 ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+/* ===== 字体规范 ===== */
+h1, .h1 {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+
+h2, .h2 {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+p, .p {
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.small-text {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+/* ===== 按钮样式 ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  min-height: 36px;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-light);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  background-color: var(--primary-dark);
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+
+.btn-secondary:hover {
+  background-color: rgba(45, 62, 80, 0.05);
+}
+
+.btn-accent {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.btn-accent:hover {
+  background-color: var(--accent-light);
+}
+
+.btn:disabled {
+  background-color: var(--disabled-color);
+  color: var(--text-tertiary);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ===== 卡片布局 ===== */
+.card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.card-sm {
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* ===== 表单元素 ===== */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.form-control {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+  background-color: white;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(0, 196, 140, 0.1);
+}
+
+.form-control.error {
+  border-color: var(--error-color);
+}
+
+/* ===== 布局工具类 ===== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -8px;
+}
+
+.col {
+  flex: 1;
+  padding: 0 8px;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+/* ===== 间距工具类 ===== */
+.m-0 { margin: 0; }
+.m-1 { margin: 8px; }
+.m-2 { margin: 16px; }
+.m-3 { margin: 24px; }
+
+.p-0 { padding: 0; }
+.p-1 { padding: 8px; }
+.p-2 { padding: 16px; }
+.p-3 { padding: 24px; }
+
+.mt-1 { margin-top: 8px; }
+.mt-2 { margin-top: 16px; }
+.mt-3 { margin-top: 24px; }
+
+.mb-1 { margin-bottom: 8px; }
+.mb-2 { margin-bottom: 16px; }
+.mb-3 { margin-bottom: 24px; }
+
+/* ===== 图标样式 ===== */
+.icon {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2px;
+  stroke: currentColor;
+  fill: none;
+}
+
+.icon-primary {
+  color: var(--accent-color);
+}
+
+.icon-secondary {
+  color: var(--text-tertiary);
+}
+
+/* ===== 导航布局 ===== */
+.top-nav {
+  background: var(--bg-card);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0 24px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar {
+  width: 240px;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-color);
+  height: calc(100vh - 64px);
+  position: fixed;
+  left: 0;
+  top: 64px;
+  overflow-y: auto;
+}
+
+.main-content {
+  margin-left: 240px;
+  padding: 24px;
+  min-height: calc(100vh - 64px);
+}
+
+/* ===== 响应式设计 ===== */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 200px;
+  }
+  
+  .main-content {
+    margin-left: 200px;
+    padding: 16px;
+  }
+  
+  .container {
+    padding: 0 12px;
+  }
+}
+
+/* ===== 特殊组件 ===== */
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-color);
+  border-top: 2px solid var(--accent-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.alert {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.alert-success {
+  background-color: rgba(0, 196, 140, 0.1);
+  border: 1px solid var(--success-color);
+  color: var(--success-color);
+}
+
+.alert-warning {
+  background-color: rgba(255, 165, 0, 0.1);
+  border: 1px solid var(--warning-color);
+  color: var(--warning-color);
+}
+
+.alert-error {
+  background-color: rgba(255, 77, 79, 0.1);
+  border: 1px solid var(--error-color);
+  color: var(--error-color);
+}

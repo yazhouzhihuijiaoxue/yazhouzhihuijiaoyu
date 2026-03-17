@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教师端首页 - 牙周智慧教学平台</title>
+    
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    
+    <!-- Element Plus -->
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
+    <script src="https://unpkg.com/element-plus"></script>
+    
+    <!-- Ant Design Icons -->
+    <link rel="stylesheet" href="https://unpkg.com/@ant-design/icons@5.2.6/dist/index.umd.css">
+    
+    <!-- ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    
+    <!-- 全局样式 -->
+    <link rel="stylesheet" href="../styles/global.css">
+    
+    <style>
+        .teacher-dashboard {
+            padding: 24px;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+        
+        .welcome-section {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 8px 0;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .action-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .action-icon {
+            font-size: 32px;
+            color: var(--accent-color);
+            margin-bottom: 12px;
+        }
+        
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .chart-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            height: 300px;
+        }
+        
+        .recent-activity {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            color: var(--accent-color);
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-time {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="teacher-dashboard">
+            <!-- 顶部导航栏 -->
+            <div class="dashboard-header">
+                <h1>教师工作台</h1>
+                <div class="user-info">
+                    <span>张教授</span>
+                    <span class="role-tag">教师</span>
+                </div>
+            </div>
+            
+            <!-- 欢迎区域 -->
+            <div class="welcome-section">
+                <h2>欢迎回来，张教授！</h2>
+                <p>今天是2026年3月9日，您有3个待批改作业和2个待录入成绩。</p>
+            </div>
+            
+            <!-- 数据统计 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">156</div>
+                    <div class="stat-label">学生总数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">进行中课程</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">待批改作业</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2</div>
+                    <div class="stat-label">待录入成绩</div>
+                </div>
+            </div>
+            
+            <!-- 快速操作 -->
+            <div class="quick-actions">
+                <div class="action-card" @click="navigateTo('homework-manage')">
+                    <div class="action-icon">📝</div>
+                    <h3>作业管理</h3>
+                    <p>发布新作业，管理课程安排</p>
+                </div>
+                <div class="action-card" @click="navigateTo('homework-review')">
+                    <div class="action-icon">✏️</div>
+                    <h3>作业批改</h3>
+                    <p>批改学生提交的作业</p>
+                </div>
+                <div class="action-card" @click="navigateTo('score-input')">
+                    <div class="action-icon">📊</div>
+                    <h3>成绩录入</h3>
+                    <p>录入虚拟仿真和头模成绩</p>
+                </div>
+                <div class="action-card" @click="navigateTo('knowledge-center')">
+                    <div class="action-icon">📚</div>
+                    <h3>学术大厅</h3>
+                    <p>查看学生讨论区内容</p>
+                </div>
+            </div>
+            
+            <!-- 图表区域 -->
+            <div class="charts-section">
+                <div class="chart-card">
+                    <h3>学生成绩分布</h3>
+                    <div id="score-chart" style="height: 250px;"></div>
+                </div>
+                <div class="chart-card">
+                    <h3>作业提交趋势</h3>
+                    <div id="submission-chart" style="height: 250px;"></div>
+                </div>
+            </div>
+            
+            <!-- 最近活动 -->
+            <div class="recent-activity">
+                <h3>最近活动</h3>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon">📝</div>
+                        <div class="activity-content">
+                            <strong>刘婧怡</strong> 提交了作业《牙周基础理论测试》
+                            <div class="activity-time">10分钟前</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">💬</div>
+                        <div class="activity-content">
+                            <strong>王同学</strong> 在讨论区发布了新问题
+                            <div class="activity-time">30分钟前</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">📊</div>
+                        <div class="activity-content">
+                            <strong>张同学</strong> 完成了虚拟仿真训练
+                            <div class="activity-time">1小时前</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">🎯</div>
+                        <div class="activity-content">
+                            <strong>赵同学</strong> 通过了案例决策测试
+                            <div class="activity-time">2小时前</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+        
+        createApp({
+            mounted() {
+                this.initCharts();
+            },
+            methods: {
+                initCharts() {
+                    // 学生成绩分布图表
+                    const scoreChart = echarts.init(document.getElementById('score-chart'));
+                    scoreChart.setOption({
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: ['0-60', '60-70', '70-80', '80-90', '90-100']
+                        },
+                        yAxis: {
+                            type: 'value'
+                        },
+                        series: [{
+                            data: [8, 12, 45, 68, 23],
+                            type: 'bar',
+                            itemStyle: {
+                                color: '#00C48C'
+                            }
+                        }]
+                    });
+                    
+                    // 作业提交趋势图表
+                    const submissionChart = echarts.init(document.getElementById('submission-chart'));
+                    submissionChart.setOption({
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: ['3月1日', '3月2日', '3月3日', '3月4日', '3月5日', '3月6日', '3月7日']
+                        },
+                        yAxis: {
+                            type: 'value'
+                        },
+                        series: [{
+                            data: [12, 18, 15, 22, 19, 25, 30],
+                            type: 'line',
+                            smooth: true,
+                            lineStyle: {
+                                color: '#2D3E50'
+                            },
+                            areaStyle: {
+                                color: 'rgba(45, 62, 80, 0.1)'
+                            }
+                        }]
+                    });
+                },
+                
+                navigateTo(page) {
+                    // 在实际应用中这里会进行页面跳转
+                    alert(`即将跳转到：${page}`);
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

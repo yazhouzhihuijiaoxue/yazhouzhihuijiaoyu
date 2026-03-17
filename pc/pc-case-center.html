@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>案例决策中心 - 牙周智慧教学平台</title>
+    
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    
+    <!-- Element Plus CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
+    <script src="https://unpkg.com/element-plus"></script>
+    
+    <!-- 全局样式 -->
+    <link rel="stylesheet" href="../styles/global.css">
+    
+    <style>
+        /* 案例决策中心特定样式 */
+        .case-layout {
+            min-height: 100vh;
+            background-color: var(--bg-color);
+        }
+        
+        .case-nav {
+            background: var(--primary-color);
+            color: white;
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .case-nav .logo {
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .case-sidebar {
+            width: 240px;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border-color);
+            height: calc(100vh - 64px);
+            position: fixed;
+            left: 0;
+            top: 64px;
+            overflow-y: auto;
+        }
+        
+        .case-sidebar .menu-section {
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .case-sidebar .section-title {
+            padding: 0 24px 8px 24px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .case-sidebar .menu-item {
+            padding: 12px 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .case-sidebar .menu-item:hover {
+            background-color: rgba(45, 62, 80, 0.05);
+        }
+        
+        .case-sidebar .menu-item.active {
+            background-color: rgba(0, 196, 140, 0.1);
+            border-left-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+        
+        .case-content {
+            margin-left: 240px;
+            padding: 24px;
+            min-height: calc(100vh - 64px);
+        }
+        
+        /* 案例筛选器样式 */
+        .case-filters {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+        
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: white;
+            font-size: 14px;
+            min-width: 120px;
+        }
+        
+        .search-input {
+            flex: 1;
+            max-width: 300px;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: white;
+            font-size: 14px;
+        }
+        
+        /* 案例卡片样式 */
+        .case-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .case-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+        
+        .case-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        .case-image {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, #2D3E50 0%, #4A5C6C 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+        }
+        
+        .case-content-wrapper {
+            padding: 20px;
+        }
+        
+        .case-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .case-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+        
+        .case-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        
+        .case-tag {
+            padding: 2px 8px;
+            background: var(--bg-color);
+            color: var(--text-secondary);
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        
+        .case-tag.difficulty-easy {
+            background: rgba(0, 196, 140, 0.1);
+            color: var(--success-color);
+        }
+        
+        .case-tag.difficulty-medium {
+            background: rgba(255, 165, 0, 0.1);
+            color: var(--warning-color);
+        }
+        
+        .case-tag.difficulty-hard {
+            background: rgba(255, 77, 79, 0.1);
+            color: var(--error-color);
+        }
+        
+        .case-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .case-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-bottom: 16px;
+        }
+        
+        .case-progress {
+            width: 100%;
+            height: 4px;
+            background: var(--bg-color);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+        
+        .case-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-color) 0%, var(--info-color) 100%);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        
+        .case-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .study-btn {
+            flex: 1;
+            padding: 8px 16px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .study-btn:hover {
+            background: var(--accent-light);
+        }
+        
+        .detail-btn {
+            padding: 8px 12px;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .detail-btn:hover {
+            background: var(--bg-color);
+        }
+        
+        /* 外部系统标签 */
+        .external-tag {
+            background: rgba(255, 165, 0, 0.1);
+            color: var(--warning-color);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-left: 8px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        /* 空状态样式 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-tertiary);
+        }
+        
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        
+        .empty-text {
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .empty-subtext {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="case-layout">
+            <!-- 顶部导航栏 -->
+            <nav class="case-nav">
+                <div class="logo">
+                    <span>🦷 牙周智慧教学平台</span>
+                    <span class="small-text" style="color: rgba(255,255,255,0.8)">案例决策中心</span>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">{{ userInitials }}</div>
+                    <div>
+                        <div style="font-size: 14px; font-weight: 500;">{{ userName }}</div>
+                        <div class="small-text" style="color: rgba(255,255,255,0.8)">学生</div>
+                    </div>
+                </div>
+            </nav>
+            
+            <!-- 左侧菜单栏 -->
+            <aside class="case-sidebar">
+                <!-- 知识整合中心 -->
+                <div class="menu-section">
+                    <div class="section-title">知识整合中心</div>
+                    <div 
+                        v-for="menu in knowledgeMenus" 
+                        :key="menu.id"
+                        class="menu-item"
+                        :class="{ active: activeMenu === menu.id }"
+                        @click="switchMenu(menu.id)"
+                    >
+                        <span>{{ menu.icon }}</span>
+                        <span>{{ menu.name }}</span>
+                    </div>
+                </div>
+                
+                <!-- 案例决策中心 -->
+                <div class="menu-section">
+                    <div class="section-title">案例决策中心</div>
+                    <div 
+                        v-for="menu in caseMenus" 
+                        :key="menu.id"
+                        class="menu-item"
+                        :class="{ active: activeMenu === menu.id }"
+                        @click="switchMenu(menu.id)"
+                    >
+                        <span>{{ menu.icon }}</span>
+                        <span>{{ menu.name }}</span>
+                    </div>
+                </div>
+                
+                <!-- 技能训练中心 -->
+                <div class="menu-section">
+                    <div class="section-title">技能训练中心</div>
+                    <div 
+                        v-for="menu in skillMenus" 
+                        :key="menu.id"
+                        class="menu-item"
+                        :class="{ active: activeMenu === menu.id }"
+                        @click="switchMenu(menu.id)"
+                    >
+                        <span>{{ menu.icon }}</span>
+                        <span>{{ menu.name }}</span>
+                    </div>
+                </div>
+                
+                <!-- 反馈评估中心 -->
+                <div class="menu-section">
+                    <div class="section-title">反馈评估中心</div>
+                    <div 
+                        v-for="menu in feedbackMenus" 
+                        :key="menu.id"
+                        class="menu-item"
+                        :class="{ active: activeMenu === menu.id }"
+                        @click="switchMenu(menu.id)"
+                    >
+                        <span>{{ menu.icon }}</span>
+                        <span>{{ menu.name }}</span>
+                    </div>
+                </div>
+            </aside>
+            
+            <!-- 主内容区域 -->
+            <main class="case-content">
+                <div class="page-header">
+                    <h1>案例决策中心</h1>
+                    <div class="d-flex align-center gap-2">
+                        <button class="btn btn-secondary" @click="refreshCases">
+                            🔄 刷新
+                        </button>
+                        <button class="btn btn-primary" @click="showCaseHelp">
+                            ❓ 案例学习指南
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 案例筛选器 -->
+                <div class="case-filters">
+                    <div class="filter-group">
+                        <span class="filter-label">案例类型：</span>
+                        <select class="filter-select" v-model="filters.type">
+                            <option value="all">全部案例</option>
+                            <option value="class">课堂案例</option>
+                            <option value="training">训练案例</option>
+                            <option value="exam">考试案例</option>
+                        </select>
+                        
+                        <span class="filter-label">难度：</span>
+                        <select class="filter-select" v-model="filters.difficulty">
+                            <option value="all">全部难度</option>
+                            <option value="easy">初级</option>
+                            <option value="medium">中级</option>
+                            <option value="hard">高级</option>
+                        </select>
+                        
+                        <span class="filter-label">状态：</span>
+                        <select class="filter-select" v-model="filters.status">
+                            <option value="all">全部状态</option>
+                            <option value="new">未开始</option>
+                            <option value="in-progress">进行中</option>
+                            <option value="completed">已完成</option>
+                        </select>
+                        
+                        <input 
+                            type="text" 
+                            class="search-input" 
+                            v-model="filters.keyword" 
+                            placeholder="搜索案例名称或关键词..."
+                        >
+                    </div>
+                </div>
+                
+                <!-- 案例网格 -->
+                <div class="case-grid" v-if="filteredCases.length > 0">
+                    <div 
+                        v-for="caseItem in filteredCases" 
+                        :key="caseItem.id" 
+                        class="case-card"
+                    >
+                        <div class="case-image">
+                            {{ caseItem.icon }}
+                        </div>
+                        <div class="case-content-wrapper">
+                            <div class="case-header">
+                                <div class="case-title">
+                                    {{ caseItem.title }}
+                                    <span v-if="caseItem.isExternal" class="external-tag">外链</span>
+                                </div>
+                            </div>
+                            
+                            <div class="case-tags">
+                                <span class="case-tag" :class="'difficulty-' + caseItem.difficulty">
+                                    {{ getDifficultyText(caseItem.difficulty) }}
+                                </span>
+                                <span class="case-tag">{{ caseItem.type }}</span>
+                                <span class="case-tag">{{ caseItem.duration }}</span>
+                            </div>
+                            
+                            <div class="case-description">
+                                {{ caseItem.description }}
+                            </div>
+                            
+                            <div class="case-meta">
+                                <span>学习人数：{{ caseItem.students }}</span>
+                                <span>平均得分：{{ caseItem.averageScore }}/100</span>
+                            </div>
+                            
+                            <div class="case-progress" v-if="caseItem.progress > 0">
+                                <div class="case-progress-bar" :style="{ width: caseItem.progress + '%' }"></div>
+                            </div>
+                            
+                            <div class="case-actions">
+                                <button 
+                                    class="study-btn" 
+                                    @click="startCaseStudy(caseItem)"
+                                    :disabled="caseItem.isExternal && !caseItem.canAccess"
+                                >
+                                    {{ getActionButtonText(caseItem) }}
+                                </button>
+                                <button class="detail-btn" @click="viewCaseDetails(caseItem)">
+                                    详情
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 空状态 -->
+                <div class="empty-state" v-else>
+                    <div class="empty-icon">📋</div>
+                    <div class="empty-text">暂无符合条件的案例</div>
+                    <div class="empty-subtext">请尝试调整筛选条件或联系教师添加新案例</div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref, computed } = Vue;
+        
+        const app = createApp({
+            setup() {
+                // 用户信息
+                const userName = ref('刘婧怡');
+                const userInitials = computed(() => {
+                    return userName.value.charAt(0);
+                });
+                
+                // 菜单数据
+                const knowledgeMenus = ref([
+                    { id: 'knowledge-map', name: '知识图谱', icon: '🧠' },
+                    { id: 'ai-assistant', name: 'AI智能助教', icon: '🤖' },
+                    { id: 'ai-diagnosis', name: 'AI辅助诊断', icon: '🔍' },
+                    { id: 'bone-pocket', name: '骨下袋教学', icon: '🦴' },
+                    { id: 'extension-course', name: '拓展课查看', icon: '🎓' }
+                ]);
+                
+                const caseMenus = ref([
+                    { id: 'class-case', name: '课堂案例', icon: '📋' },
+                    { id: 'training-case', name: '训练案例', icon: '💪' },
+                    { id: 'exam-case', name: '考试案例', icon: '📝' }
+                ]);
+                
+                const skillMenus = ref([
+                    { id: 'virtual-training', name: '虚拟仿真训练', icon: '🎮' },
+                    { id: 'virtual-score', name: '虚拟仿真成绩', icon: '📊' },
+                    { id: 'headmodel-score', name: '仿人头模成绩', icon: '👤' }
+                ]);
+                
+                const feedbackMenus = ref([
+                    { id: 'homework-upload', name: '作业上传', icon: '📤' },
+                    { id: 'academic-hall', name: '虚拟学术大厅', icon: '🏛️' },
+                    { id: 'learning-suggest', name: '学习建议', icon: '💡' },
+                    { id: 'competency-chart', name: '胜任力雷达图', icon: '📈' }
+                ]);
+                
+                // 当前激活菜单
+                const activeMenu = ref('class-case');
+                
+                // 筛选条件
+                const filters = ref({
+                    type: 'all',
+                    difficulty: 'all',
+                    status: 'all',
+                    keyword: ''
+                });
+                
+                // 案例数据
+                const cases = ref([
+                    {
+                        id: 1,
+                        title: '慢性牙周炎病例诊疗',
+                        type: '课堂案例',
+                        difficulty: 'medium',
+                        duration: '45分钟',
+                        description: '45岁男性患者，主诉牙龈出血、牙齿松动。通过完整的病史采集、临床检查和影像学分析，制定个性化治疗方案。',
+                        students: 156,
+                        averageScore: 82,
+                        progress: 0,
+                        icon: '🦷',
+                        isExternal: false
+                    },
+                    {
+                        id: 2,
+                        title: '侵袭性牙周炎诊断',
+                        type: '训练案例',
+                        difficulty: 'hard',
+                        duration: '60分钟',
+                        description: '32岁女性患者，快速进展的牙周组织破坏。重点训练早期诊断、鉴别诊断和治疗方案制定能力。',
+                        students: 89,
+                        averageScore: 75,
+                        progress: 65,
+                        icon: '🔍',
+                        isExternal: false
+                    },
+                    {
+                        id: 3,
+                        title: '牙周手术模拟训练',
+                        type: '考试案例',
+                        difficulty: 'hard',
+                        duration: '90分钟',
+                        description: '模拟真实牙周手术场景，考核手术方案设计、操作技巧和术后处理能力。',
+                        students: 42,
+                        averageScore: 68,
+                        progress: 0,
+                        icon: '🔪',
+                        isExternal: false
+                    },
+                    {
+                        id: 4,
+                        title: '牙周病系统训练案例',
+                        type: '训练案例',
+                        difficulty: 'easy',
+                        duration: '30分钟',
+                        description: '基础牙周病知识巩固训练，涵盖常见牙周疾病的诊断和治疗原则。',
+                        students: 234,
+                        averageScore: 88,
+                        progress: 100,
+                        icon: '📚',
+                        isExternal: true,
+                        canAccess: false
+                    }
+                ]);
+                
+                // 筛选后的案例
+                const filteredCases = computed(() => {
+                    return cases.value.filter(caseItem => {
+                        // 类型筛选
+                        if (filters.value.type !== 'all' && caseItem.type !== getTypeText(filters.value.type)) {
+                            return false;
+                        }
+                        
+                        // 难度筛选
+                        if (filters.value.difficulty !== 'all' && caseItem.difficulty !== filters.value.difficulty) {
+                            return false;
+                        }
+                        
+                        // 状态筛选
+                        if (filters.value.status !== 'all') {
+                            if (filters.value.status === 'new' && caseItem.progress > 0) {
+                                return false;
+                            }
+                            if (filters.value.status === 'in-progress' && (caseItem.progress === 0 || caseItem.progress === 100)) {
+                                return false;
+                            }
+                            if (filters.value.status === 'completed' && caseItem.progress !== 100) {
+                                return false;
+                            }
+                        }
+                        
+                        // 关键词筛选
+                        if (filters.value.keyword) {
+                            const keyword = filters.value.keyword.toLowerCase();
+                            return caseItem.title.toLowerCase().includes(keyword) || 
+                                   caseItem.description.toLowerCase().includes(keyword);
+                        }
+                        
+                        return true;
+                    });
+                });
+                
+                // 获取难度文本
+                const getDifficultyText = (difficulty) => {
+                    const difficultyMap = {
+                        'easy': '初级',
+                        'medium': '中级',
+                        'hard': '高级'
+                    };
+                    return difficultyMap[difficulty] || '未知';
+                };
+                
+                // 获取类型文本
+                const getTypeText = (type) => {
+                    const typeMap = {
+                        'class': '课堂案例',
+                        'training': '训练案例',
+                        'exam': '考试案例'
+                    };
+                    return typeMap[type] || '全部案例';
+                };
+                
+                // 获取操作按钮文本
+                const getActionButtonText = (caseItem) => {
+                    if (caseItem.isExternal && !caseItem.canAccess) {
+                        return '需外链访问';
+                    }
+                    if (caseItem.progress === 0) {
+                        return '开始学习';
+                    } else if (caseItem.progress === 100) {
+                        return '查看结果';
+                    } else {
+                        return '继续学习';
+                    }
+                };
+                
+                // 切换菜单
+                const switchMenu = (menuId) => {
+                    activeMenu.value = menuId;
+                    console.log('切换到菜单:', menuId);
+                };
+                
+                // 刷新案例
+                const refreshCases = () => {
+                    console.log('刷新案例数据');
+                    // 这里可以添加数据刷新逻辑
+                };
+                
+                // 显示案例帮助
+                const showCaseHelp = () => {
+                    alert('案例学习指南：\n\n1. 课堂案例：跟随教师讲解学习标准诊疗流程\n2. 训练案例：自主练习，系统提供实时反馈\n3. 考试案例：考核综合能力，计入学习成绩\n4. 外链案例：需要访问外部训练平台');
+                };
+                
+                // 开始案例学习
+                const startCaseStudy = (caseItem) => {
+                    if (caseItem.isExternal && !caseItem.canAccess) {
+                        if (confirm('此案例需要访问外部训练平台(edemtet)，需要二次登录。是否继续？')) {
+                            window.open('https://edemtet.com/training-case', '_blank');
+                        }
+                        return;
+                    }
+                    
+                    console.log('开始学习案例:', caseItem.title);
+                    alert(`开始学习：${caseItem.title}\n\n案例类型：${caseItem.type}\n预计时长：${caseItem.duration}`);
+                };
+                
+                // 查看案例详情
+                const viewCaseDetails = (caseItem) => {
+                    alert(`案例详情：\n\n案例名称：${caseItem.title}\n案例类型：${caseItem.type}\n难度等级：${getDifficultyText(caseItem.difficulty)}\n学习时长：${caseItem.duration}\n平均得分：${caseItem.averageScore}/100\n学习人数：${caseItem.students}\n\n案例描述：${caseItem.description}`);
+                };
+                
+                return {
+                    userName,
+                    userInitials,
+                    knowledgeMenus,
+                    caseMenus,
+                    skillMenus,
+                    feedbackMenus,
+                    activeMenu,
+                    filters,
+                    cases,
+                    filteredCases,
+                    getDifficultyText,
+                    getActionButtonText,
+                    switchMenu,
+                    refreshCases,
+                    showCaseHelp,
+                    startCaseStudy,
+                    viewCaseDetails
+                };
+            }
+        });
+        
+        app.mount('#app');
+    </script>
+</body>
+</html>

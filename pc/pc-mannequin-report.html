@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>仿头模训练学情报告 - 牙周智慧教学平台</title>
+    
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    
+    <!-- Element Plus CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
+    <script src="https://unpkg.com/element-plus"></script>
+    
+    <!-- 全局样式 -->
+    <link rel="stylesheet" href="../styles/global.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #F5F7FA;
+            color: #2D3E50;
+            line-height: 1.5;
+        }
+        
+        .mannequin-report-page {
+            min-height: 100vh;
+            padding: 24px;
+        }
+        
+        /* 页面头部 */
+        .page-header {
+            margin-bottom: 24px;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2D3E50;
+            margin-bottom: 8px;
+        }
+        
+        .page-subtitle {
+            font-size: 16px;
+            color: #666666;
+        }
+        
+        /* 内容区域 */
+        .content-area {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        /* 统计卡片 */
+        .stats-card {
+            background: #FFFFFF;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2D3E50;
+            margin-bottom: 16px;
+            padding-left: 12px;
+            border-left: 3px solid #00C48C;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 16px;
+            background: #F8F9FA;
+            border-radius: 8px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #00C48C;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666666;
+        }
+        
+        /* 最难技能 */
+        .difficult-skills {
+            background: #FFF7E6;
+            border: 1px solid #FFD591;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        
+        .difficult-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #D46B08;
+            margin-bottom: 8px;
+        }
+        
+        .difficult-content {
+            font-size: 14px;
+            color: #D46B08;
+        }
+        
+        /* 雷达图卡片 */
+        .radar-card {
+            background: #FFFFFF;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 24px;
+        }
+        
+        .radar-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+        
+        .radar-chart {
+            position: relative;
+            width: 400px;
+            height: 400px;
+        }
+        
+        .radar-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .radar-polygon {
+            fill: rgba(0, 196, 140, 0.3);
+            stroke: #00C48C;
+            stroke-width: 2;
+        }
+        
+        .radar-axis {
+            stroke: #E0E0E0;
+            stroke-width: 1;
+        }
+        
+        .radar-label {
+            font-size: 12px;
+            color: #2D3E50;
+            text-anchor: middle;
+            font-weight: 500;
+        }
+        
+        .radar-score {
+            font-size: 11px;
+            color: #00C48C;
+            text-anchor: middle;
+            font-weight: 600;
+        }
+        
+        /* 雷达图容器优化 */
+        .radar-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            overflow: visible;
+        }
+        
+        /* 确保SVG内容可见 */
+        svg {
+            overflow: visible;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .radar-chart {
+                width: 250px;
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="mannequin-report-page">
+            <!-- 页面头部 -->
+            <div class="page-header">
+                <h1 class="page-title">仿头模训练学情报告</h1>
+                <p class="page-subtitle">班级仿头模训练学习情况统计分析</p>
+            </div>
+            
+            <!-- 内容区域 -->
+            <div class="content-area">
+                <!-- 统计信息卡片 -->
+                <div class="stats-card">
+                    <div class="card-title">训练概况</div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value">79.17%</div>
+                            <div class="stat-label">平均通过率（≥80分）</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">87</div>
+                            <div class="stat-label">平均分</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">24</div>
+                            <div class="stat-label">总参与人</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">2</div>
+                            <div class="stat-label">最难技能数量</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 最难技能 -->
+                    <div class="difficult-skills">
+                        <div class="difficult-title">最难技能</div>
+                        <div class="difficult-content">体位、椅位；正确的操作方式</div>
+                    </div>
+                </div>
+                
+                <!-- 雷达图卡片 -->
+                <div class="radar-card">
+                    <div class="card-title">6个维度能力分析雷达图</div>
+                    <div class="radar-container">
+                        <div class="radar-chart">
+                            <svg width="400" height="320" viewBox="0 0 400 320">
+                                <!-- 网格线 -->
+                                <g class="radar-grid">
+                                    <!-- 外圈 100% -->
+                                    <polygon points="200,50 287,100 287,200 200,250 113,200 113,100" fill="none" stroke="#CCCCCC" stroke-width="1.5"/>
+                                    <!-- 中圈 75% -->
+                                    <polygon points="200,100 265,113 265,188 200,225 135,188 135,113" fill="none" stroke="#DDDDDD" stroke-width="1"/>
+                                    <!-- 内圈 50% -->
+                                    <polygon points="200,150 243,175 243,225 200,250 157,225 157,175" fill="none" stroke="#EEEEEE" stroke-width="1"/>
+                                    
+                                    <!-- 坐标轴 -->
+                                    <line x1="200" y1="150" x2="200" y2="50" stroke="#BBBBBB" stroke-width="1"/>
+                                    <line x1="200" y1="150" x2="287" y2="100" stroke="#BBBBBB" stroke-width="1"/>
+                                    <line x1="200" y1="150" x2="287" y2="200" stroke="#BBBBBB" stroke-width="1"/>
+                                    <line x1="200" y1="150" x2="200" y2="250" stroke="#BBBBBB" stroke-width="1"/>
+                                    <line x1="200" y1="150" x2="113" y2="200" stroke="#BBBBBB" stroke-width="1"/>
+                                    <line x1="200" y1="150" x2="113" y2="100" stroke="#BBBBBB" stroke-width="1"/>
+                                </g>
+                                
+                                <!-- 雷达图数据 -->
+                                <polygon class="radar-polygon" points="200,55 270,109 274,193 200,226 120,198 126,107"/>
+                                
+                                <!-- 维度标签 -->
+                                <text x="200" y="35" class="radar-label">基本理论知识</text>
+                                <text x="200" y="48" class="radar-score">98</text>
+                                
+                                <text x="295" y="105" class="radar-label">椅位、体位、灯光</text>
+                                <text x="295" y="118" class="radar-score">81</text>
+                                
+                                <text x="295" y="200" class="radar-label">器械选择与握持</text>
+                                <text x="295" y="213" class="radar-score">86</text>
+                                
+                                <text x="200" y="275" class="radar-label">正确的操作方式</text>
+                                <text x="200" y="288" class="radar-score">76</text>
+                                
+                                <text x="90" y="200" class="radar-label">洁治后检查处理</text>
+                                <text x="90" y="213" class="radar-score">95</text>
+                                
+                                <text x="90" y="105" class="radar-label">洁治效果和医嘱</text>
+                                <text x="90" y="118" class="radar-score">86</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref } = Vue;
+        
+        const app = createApp({
+            setup() {
+                // 雷达图数据
+                const radarData = ref([
+                    { name: '基本理论知识', score: 98, maxScore: 100 },
+                    { name: '椅位、体位、灯光', score: 81, maxScore: 100 },
+                    { name: '器械选择与握持', score: 86, maxScore: 100 },
+                    { name: '正确的操作方式', score: 76, maxScore: 100 },
+                    { name: '洁治后检查处理', score: 95, maxScore: 100 },
+                    { name: '洁治效果和医嘱', score: 86, maxScore: 100 }
+                ]);
+                
+                return {
+                    radarData
+                };
+            }
+        });
+        
+        app.mount('#app');
+    </script>
+</body>
+</html>

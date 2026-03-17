@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>牙周智慧教学平台 - 学生端</title>
+    
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    
+    <!-- Element Plus CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
+    <script src="https://unpkg.com/element-plus"></script>
+    
+    <!-- Ant Design Icons CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/@ant-design/icons@5.0.1/dist/index.umd.js">
+    
+    <!-- 全局样式 -->
+    <link rel="stylesheet" href="../styles/global.css">
+    
+    <style>
+        /* 学生端特定样式 */
+        .student-layout {
+            min-height: 100vh;
+            background-color: var(--bg-color);
+        }
+        
+        .student-nav {
+            background: var(--primary-color);
+            color: white;
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .student-nav .logo {
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .student-sidebar {
+            width: 240px;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border-color);
+            height: calc(100vh - 64px);
+            position: fixed;
+            left: 0;
+            top: 64px;
+            overflow-y: auto;
+        }
+        
+        .student-sidebar .menu-section {
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .student-sidebar .section-title {
+            padding: 0 24px 8px 24px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .student-sidebar .menu-item {
+            padding: 12px 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .student-sidebar .menu-item:hover {
+            background-color: rgba(45, 62, 80, 0.05);
+        }
+        
+        .student-sidebar .menu-item.active {
+            background-color: rgba(0, 196, 140, 0.1);
+            border-left-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+        
+        .student-content {
+            margin-left: 240px;
+            padding: 24px;
+            min-height: calc(100vh - 64px);
+        }
+        
+        .student-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .dashboard-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .dashboard-card .card-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+        
+        .dashboard-card .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .dashboard-card .card-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="student-layout">
+            <!-- 顶部导航栏 -->
+            <nav class="student-nav">
+                <div class="logo">
+                    <span>🦷 牙周智慧教学平台</span>
+                    <span class="small-text" style="color: rgba(255,255,255,0.8)">学生端</span>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">{{ userInitials }}</div>
+                    <div>
+                        <div style="font-size: 14px; font-weight: 500;">{{ userName }}</div>
+                        <div class="small-text" style="color: rgba(255,255,255,0.8)">学生</div>
+                    </div>
+                </div>
+            </nav>
+            
+            <!-- 左侧菜单栏 -->
+            <aside class="student-sidebar">
+                <!-- 知识整合中心 -->
+                <div class="menu-section">
+                    <div class="section-title">知识整合中心</div>
+                    <div 
+                        v-for="menu in knowledgeMenus" 
+                        :key="menu.id"
+                        class="menu-item"
+                        :class="{ active: activeMenu === menu.id }"
+                        @click="switchMenu(menu.id)"
+                    >
+                        <span>{{ menu.icon }}</span>
+                        <span>{{ menu.name }}</span>
+                    </div>
+                </div>
+                
+                <!-- 案例决策中心 -->
+                <div class="menu-section">
+                    <div class="section-title">案例决策中心</div>
+                    <div 
+                        v-for="menu in caseMenus" 
+                        :key="menu.id"
+                        class="menu-item"
+                        :class="{ active: activeMenu === menu.id }"
+                        @click="switchMenu(menu.id)"
+                    >
+                        <span>{{ menu.icon }}</span>
+                        <span>{{ menu.name }}</span>
+                    </div>
+                </div>
+                
+                <!-- 技能训练中心 -->
+                <div class="menu-section">
+                    <div class="section-title">技能训练中心</div>
+                    <div 
+                        v-for="menu in skillMenus" 
+                        :key="menu.id"
+                        class="menu-item"
+                        :class="{ active: activeMenu === menu.id }"
+                        @click="switchMenu(menu.id)"
+                    >
+                        <span>{{ menu.icon }}</span>
+                        <span>{{ menu.name }}</span>
+                    </div>
+                </div>
+                
+                <!-- 反馈评估中心 -->
+                <div class="menu-section">
+                    <div class="section-title">反馈评估中心</div>
+                    <div 
+                        v-for="menu in feedbackMenus" 
+                        :key="menu.id"
+                        class="menu-item"
+                        :class="{ active: activeMenu === menu.id }"
+                        @click="switchMenu(menu.id)"
+                    >
+                        <span>{{ menu.icon }}</span>
+                        <span>{{ menu.name }}</span>
+                    </div>
+                </div>
+            </aside>
+            
+            <!-- 主内容区域 -->
+            <main class="student-content">
+                <div class="page-header">
+                    <h1>{{ currentMenuName }}</h1>
+                    <div class="d-flex align-center gap-2">
+                        <button class="btn btn-secondary" @click="handleAction('refresh')">
+                            🔄 刷新
+                        </button>
+                        <button class="btn btn-primary" @click="handleAction('study')">
+                            📖 开始学习
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 仪表板视图 -->
+                <div v-if="activeMenu === 'dashboard'">
+                    <div class="student-dashboard">
+                        <div class="dashboard-card">
+                            <div class="card-icon">📚</div>
+                            <div class="card-title">待完成作业</div>
+                            <div class="card-desc">您有 {{ pendingHomework }} 项作业待完成</div>
+                            <button class="btn btn-primary" @click="switchMenu('homework')">查看作业</button>
+                        </div>
+                        
+                        <div class="dashboard-card">
+                            <div class="card-icon">🎯</div>
+                            <div class="card-title">技能训练进度</div>
+                            <div class="card-desc">已完成 {{ trainingProgress }}% 的训练内容</div>
+                            <button class="btn btn-accent" @click="switchMenu('training')">继续训练</button>
+                        </div>
+                        
+                        <div class="dashboard-card">
+                            <div class="card-icon">📊</div>
+                            <div class="card-title">学习报告</div>
+                            <div class="card-desc">查看您的学习表现和能力分析</div>
+                            <button class="btn btn-secondary" @click="switchMenu('report')">查看报告</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 页面内容区域 -->
+                <div v-else class="card">
+                    <div class="card-header">
+                        <h2>{{ currentMenuName }}</h2>
+                    </div>
+                    <div class="p-3">
+                        <p>这里是 {{ currentMenuName }} 页面内容区域。</p>
+                        <p>请根据具体功能需求在此区域开发相应的界面组件。</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref, computed } = Vue;
+        
+        const app = createApp({
+            setup() {
+                // 用户信息
+                const userName = ref('李同学');
+                const userInitials = computed(() => {
+                    return userName.value.charAt(0);
+                });
+                
+                // 菜单数据 - 按功能中心分组
+                const knowledgeMenus = ref([
+                    { id: 'knowledge-map', name: '知识图谱', icon: '🧠' },
+                    { id: 'ai-assistant', name: 'AI智能助教', icon: '🤖' },
+                    { id: 'ai-diagnosis', name: 'AI辅助诊断', icon: '🔍' },
+                    { id: 'bone-pocket', name: '骨下袋教学', icon: '🦴' },
+                    { id: 'extension-course', name: '拓展课查看', icon: '🎓' }
+                ]);
+                
+                const caseMenus = ref([
+                    { id: 'class-case', name: '课堂案例', icon: '📋' },
+                    { id: 'training-case', name: '训练案例', icon: '💪' },
+                    { id: 'exam-case', name: '考试案例', icon: '📝' }
+                ]);
+                
+                const skillMenus = ref([
+                    { id: 'virtual-training', name: '虚拟仿真训练', icon: '🎮' },
+                    { id: 'virtual-score', name: '虚拟仿真成绩', icon: '📊' },
+                    { id: 'headmodel-score', name: '仿人头模成绩', icon: '👤' }
+                ]);
+                
+                const feedbackMenus = ref([
+                    { id: 'homework-upload', name: '作业上传', icon: '📤' },
+                    { id: 'academic-hall', name: '虚拟学术大厅', icon: '🏛️' },
+                    { id: 'learning-suggest', name: '学习建议', icon: '💡' },
+                    { id: 'competency-chart', name: '胜任力雷达图', icon: '📈' }
+                ]);
+                
+                // 所有菜单合并
+                const allMenus = computed(() => {
+                    return [
+                        ...knowledgeMenus.value,
+                        ...caseMenus.value,
+                        ...skillMenus.value,
+                        ...feedbackMenus.value
+                    ];
+                });
+                
+                // 当前激活菜单
+                const activeMenu = ref('dashboard');
+                
+                // 当前菜单名称
+                const currentMenuName = computed(() => {
+                    if (activeMenu.value === 'dashboard') return '学习仪表板';
+                    const menu = allMenus.value.find(m => m.id === activeMenu.value);
+                    return menu ? menu.name : '学习中心';
+                });
+                
+                // 学习数据
+                const pendingHomework = ref(3);
+                const trainingProgress = ref(65);
+                
+                // 切换菜单
+                const switchMenu = (menuId) => {
+                    activeMenu.value = menuId;
+                    console.log('切换到菜单:', menuId);
+                };
+                
+                // 处理操作
+                const handleAction = (action) => {
+                    console.log('执行操作:', action);
+                    switch(action) {
+                        case 'refresh':
+                            // 刷新数据逻辑
+                            break;
+                        case 'study':
+                            // 开始学习逻辑
+                            break;
+                    }
+                };
+                
+                return {
+                    userName,
+                    userInitials,
+                    knowledgeMenus,
+                    caseMenus,
+                    skillMenus,
+                    feedbackMenus,
+                    allMenus,
+                    activeMenu,
+                    currentMenuName,
+                    pendingHomework,
+                    trainingProgress,
+                    switchMenu,
+                    handleAction
+                };
+            }
+        });
+        
+        // 使用Element Plus
+        app.use(ElementPlus);
+        app.mount('#app');
+    </script>
+</body>
+</html>

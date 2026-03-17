@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>仿人头模成绩 - 牙周智慧教学平台</title>
+    
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    
+    <!-- Ant Design Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ant-design/icons-vue@6.x/dist/index.css">
+    
+    <!-- 全局样式 -->
+    <link rel="stylesheet" href="../styles/global.css">
+    
+    <style>
+        .mannequin-score-page {
+            padding: 0;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+        }
+        
+        /* 顶部导航栏 */
+        .student-nav {
+            background: #2D3E50;
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .logo-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        
+        .logo-title:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .logo-title:active {
+            transform: translateY(0px);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #00C48C;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .small-text {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        /* 页面内容 */
+        .student-content {
+            padding: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* 页面头部 */
+        .page-header {
+            background: white;
+            padding: 24px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .page-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2D3E50;
+            margin-bottom: 8px;
+        }
+        
+        .page-subtitle {
+            font-size: 14px;
+            color: #B0BEC5;
+        }
+        
+        /* 筛选区域 */
+        .filter-section {
+            background: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .filter-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #2D3E50;
+            margin-bottom: 12px;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .filter-button {
+            padding: 8px 16px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            background: #FFFFFF;
+            color: #2D3E50;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-button:hover {
+            border-color: #00C48C;
+            color: #00C48C;
+        }
+        
+        .filter-button.active {
+            background: #00C48C;
+            border-color: #00C48C;
+            color: #FFFFFF;
+        }
+        
+        /* 训练项目网格布局 */
+        .training-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+        
+        /* 训练项目卡片 - 方块型布局 */
+        .training-card {
+            background: #FFFFFF;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        .training-card:hover {
+            background: #F5F7FA;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .training-card.disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        .training-card.disabled:hover {
+            background: #FFFFFF;
+            transform: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .card-icon {
+            font-size: 32px;
+            width: 48px;
+            text-align: center;
+        }
+        
+        .card-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #2D3E50;
+            flex: 1;
+        }
+        
+        .card-content {
+            flex: 1;
+            margin-bottom: 12px;
+        }
+        
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* 状态标签 */
+        .status-tag {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-not-started {
+            background: #F5F5F5;
+            color: #9E9E9E;
+        }
+        
+        .status-in-progress {
+            background: #FFF7E6;
+            color: #FA8C16;
+        }
+        
+        .status-completed {
+            background: #F6FFED;
+            color: #52C41A;
+        }
+        
+        /* 得分显示 */
+        .score-display {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .score-completed {
+            color: #00C48C;
+        }
+        
+        .score-not-started {
+            color: #B0BEC5;
+        }
+        
+        /* 操作图标 */
+        .action-icon {
+            font-size: 16px;
+            color: #B0BEC5;
+            width: 24px;
+            text-align: center;
+        }
+        
+        /* 虚拟通关证标签 */
+        .certificate-tag {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 8px;
+            display: inline-block;
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+            }
+            to {
+                box-shadow: 0 0 12px rgba(255, 215, 0, 0.8);
+            }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .student-content {
+                padding: 16px;
+            }
+            
+            .training-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-buttons {
+                flex-wrap: wrap;
+            }
+            
+            .filter-button {
+                flex: 1;
+                min-width: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="mannequin-score-page">
+            <!-- 顶部导航栏 -->
+            <nav class="student-nav">
+                <div class="logo">
+                    <span class="logo-title" @click="goToHomePage">🦷 牙周智慧教学平台</span>
+                    <span class="small-text" style="color: rgba(255,255,255,0.8)">仿人头模成绩</span>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">
+                        {{ userInitials }}
+                    </div>
+                    <div>
+                        <div style="font-size: 14px; font-weight: 500;">{{ userName }}</div>
+                        <div class="small-text" style="color: rgba(255,255,255,0.8)">学生</div>
+                    </div>
+                </div>
+            </nav>
+            
+            <!-- 页面内容 -->
+            <div class="student-content">
+                <!-- 页面头部 -->
+                <div class="page-header">
+                    <h1 class="page-title">仿人头模成绩</h1>
+                    <p class="page-subtitle">查看您的仿人头模训练考核成绩</p>
+                </div>
+                
+                <!-- 筛选区域 -->
+                <div class="filter-section">
+                    <div class="filter-title">筛选：</div>
+                    <div class="filter-buttons">
+                        <button 
+                            v-for="filter in filters" 
+                            :key="filter.id"
+                            class="filter-button"
+                            :class="{ active: activeFilter === filter.id }"
+                            @click="setActiveFilter(filter.id)"
+                        >
+                            {{ filter.name }}
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 训练项目网格 -->
+                <div class="training-grid">
+                    <div 
+                        v-for="project in filteredProjects" 
+                        :key="project.id"
+                        class="training-card"
+                        :class="{ disabled: !project.clickable }"
+                        @click="handleProjectClick(project)"
+                    >
+                        <div class="card-header">
+                            <div class="card-icon">{{ project.icon }}</div>
+                            <div class="card-title">{{ project.name }}</div>
+                        </div>
+                        
+                        <div class="card-content">
+                            <!-- 虚拟通关证标签 -->
+                            <div 
+                                v-if="project.showCertificate" 
+                                class="certificate-tag"
+                            >
+                                🏆 虚拟通关证
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer">
+                            <!-- 状态标签 -->
+                            <div 
+                                class="status-tag"
+                                :class="getStatusClass(project.status)"
+                            >
+                                {{ getStatusText(project.status) }}
+                            </div>
+                            
+                            <!-- 得分显示 -->
+                            <div 
+                                class="score-display"
+                                :class="{ 
+                                    'score-completed': project.status === 'completed',
+                                    'score-not-started': project.status !== 'completed'
+                                }"
+                            >
+                                {{ project.score !== null ? project.score + '分' : '--' }}
+                            </div>
+                            
+                            <!-- 操作图标 -->
+                            <div class="action-icon">
+                                {{ project.clickable ? '→' : '🔒' }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref, computed, onMounted } = Vue;
+        
+        const app = createApp({
+            setup() {
+                // 用户信息
+                const userName = ref('刘婧怡');
+                const userInitials = computed(() => {
+                    return userName.value.charAt(0);
+                });
+                
+                // 筛选功能
+                const activeFilter = ref('all');
+                const filters = ref([
+                    { id: 'all', name: '全部' },
+                    { id: 'completed', name: '已完成' },
+                    { id: 'in-progress', name: '进行中' },
+                    { id: 'not-started', name: '未开始' }
+                ]);
+                
+                // 设置筛选条件
+                const setActiveFilter = (filterId) => {
+                    activeFilter.value = filterId;
+                };
+                
+                // 训练项目数据 - 仿人头模相关项目
+                const trainingProjects = ref([
+                    {
+                        id: 1,
+                        name: '牙周专业检查',
+                        icon: '🔍',
+                        status: 'completed',
+                        score: 98,
+                        clickable: false,
+                        showCertificate: false
+                    },
+                    {
+                        id: 2,
+                        name: '手工龈上洁治术',
+                        icon: '🦷',
+                        status: 'completed',
+                        score: 96,
+                        clickable: true,
+                        showCertificate: false,
+                        detailRoute: '/training/mannequin-score/supragingival-scaling'
+                    },
+                    {
+                        id: 3,
+                        name: '手工龈下刮治及根面平整',
+                        icon: '🦷',
+                        status: 'not-started',
+                        score: null,
+                        clickable: false,
+                        showCertificate: false,
+                        detailRoute: '/training/mannequin-score/subgingival-scaling'
+                    },
+                    {
+                        id: 4,
+                        name: '牙周翻瓣术',
+                        icon: '🔪',
+                        status: 'not-started',
+                        score: null,
+                        clickable: true,
+                        showCertificate: false,
+                        detailRoute: ''
+                    }
+                ]);
+                
+                // 筛选后的项目列表
+                const filteredProjects = computed(() => {
+                    const list = [...trainingProjects.value];
+                    if (activeFilter.value === 'all') {
+                        return list.sort((a, b) => {
+                            // 已完成状态优先显示
+                            if (a.status === 'completed' && b.status !== 'completed') return -1;
+                            if (a.status !== 'completed' && b.status === 'completed') return 1;
+                            // 同状态按得分排序
+                            return (b.score || 0) - (a.score || 0);
+                        });
+                    }
+                    
+                    return list
+                        .filter(project => project.status === activeFilter.value)
+                        .sort((a, b) => (b.score || 0) - (a.score || 0));
+                });
+                
+                // 获取状态标签类名
+                const getStatusClass = (status) => {
+                    switch (status) {
+                        case 'not-started':
+                            return 'status-not-started';
+                        case 'in-progress':
+                            return 'status-in-progress';
+                        case 'completed':
+                            return 'status-completed';
+                        default:
+                            return 'status-not-started';
+                    }
+                };
+                
+                // 获取状态标签文本
+                const getStatusText = (status) => {
+                    switch (status) {
+                        case 'not-started':
+                            return '未开始';
+                        case 'in-progress':
+                            return '进行中';
+                        case 'completed':
+                            return '已完成';
+                        default:
+                            return '未开始';
+                    }
+                };
+                
+                // 处理项目点击
+                const handleProjectClick = (project) => {
+                    if (!project.clickable) {
+                        return;
+                    }
+                    
+                    // 根据项目ID跳转到详情页面
+                    switch (project.id) {
+                        case 2: // 手工龈上洁治术
+                            window.location.href = 'pc-mannequin-supragingival.html';
+                            break;
+                        case 3: // 手工龈下刮治及根面平整术
+                            window.location.href = 'pc-mannequin-subgingival.html';
+                            break;
+                        default:
+                            break;
+                    }
+                };
+                
+                // 跳转到首页
+                const goToHomePage = () => {
+                    window.location.href = 'pc-student-index.html';
+                };
+                
+                return {
+                    userName,
+                    userInitials,
+                    filters,
+                    activeFilter,
+                    trainingProjects,
+                    filteredProjects,
+                    setActiveFilter,
+                    getStatusClass,
+                    getStatusText,
+                    handleProjectClick,
+                    goToHomePage
+                };
+            }
+        });
+        
+        app.mount('#app');
+    </script>
+</body>
+</html>

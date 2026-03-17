@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>胜任力雷达图 - 牙周智慧教学平台</title>
+    
+    <!-- 引入Vue 3 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+    
+    <!-- 引入Ant Design Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/@ant-design/icons-vue@4/dist/index.umd.js"></script>
+    
+    <!-- 引入全局样式 -->
+    <link rel="stylesheet" href="../styles/global.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #F5F7FA;
+            color: #2D3E50;
+            line-height: 1.5;
+        }
+        
+        .competency-radar-page {
+            min-height: 100vh;
+            padding: 24px;
+        }
+        
+        /* 页面头部 */
+        .page-header {
+            margin-bottom: 24px;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2D3E50;
+            margin-bottom: 8px;
+        }
+        
+        .page-subtitle {
+            font-size: 16px;
+            color: #666666;
+        }
+        
+        /* 内容区域 */
+        .content-area {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* 学员信息卡片 */
+        .student-info-card {
+            background: #FFFFFF;
+            border: 1px solid #E8E8E8;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1A1A1A;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #00C48C;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .info-label {
+            font-size: 14px;
+            color: #666666;
+        }
+        
+        .info-value {
+            font-size: 14px;
+            color: #2D3E50;
+            font-weight: 500;
+        }
+        
+        .score-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #00C48C;
+        }
+        
+        /* 雷达图卡片 */
+        .radar-card {
+            background: #FFFFFF;
+            border: 1px solid #E8E8E8;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+        
+        /* 学员信息和雷达图组合卡片 */
+        .info-radar-card {
+            background: #FFFFFF;
+            border: 1px solid #E8E8E8;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+        
+        .info-radar-content {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+        }
+        
+        .student-info-section {
+            flex: 0 0 280px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .avatar-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00C48C 0%, #00A870 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 196, 140, 0.3);
+        }
+        
+        .student-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        
+        .score-breakdown {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .score-breakdown .score-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .score-breakdown .score-name {
+            font-size: 13px;
+            color: #64748b;
+        }
+        
+        .score-breakdown .score-num {
+            font-size: 14px;
+            font-weight: 600;
+            color: #00C48C;
+        }
+        
+        .student-info-section .info-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        .student-info-section .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .student-info-section .info-label {
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .student-info-section .info-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        
+        .student-info-section .info-value.score-value {
+            font-size: 28px;
+            color: #00C48C;
+            font-weight: 700;
+        }
+        
+        .radar-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1A1A1A;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #00C48C;
+        }
+        
+        .radar-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            padding: 20px;
+        }
+        
+        .radar-chart {
+            position: relative;
+            width: 400px;
+            height: 400px;
+        }
+        
+        .radar-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .radar-grid polygon {
+            fill: none;
+            stroke: #E8E8E8;
+            stroke-width: 1;
+            transition: all 0.3s ease;
+        }
+        
+        .radar-grid polygon:hover {
+            stroke: #00C48C;
+            stroke-width: 2;
+        }
+        
+        .radar-polygon {
+            fill: url(#radarGradient);
+            stroke: #00C48C;
+            stroke-width: 3;
+            filter: drop-shadow(0 0 8px rgba(0, 196, 140, 0.4));
+            animation: radarPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes radarPulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+        
+        .radar-axis {
+            stroke: #E0E0E0;
+            stroke-width: 1;
+        }
+        
+        .radar-label {
+            font-size: 15px;
+            font-weight: 600;
+            fill: #2D3E50;
+            text-anchor: middle;
+        }
+        
+        .radar-score {
+            font-size: 13px;
+            font-weight: 500;
+            fill: #00C48C;
+            text-anchor: middle;
+        }
+        
+        .radar-legend {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+            padding: 16px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #2D3E50;
+            padding: 8px 16px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .legend-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,196,140,0.2);
+        }
+        
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00C48C 0%, #00D9A0 100%);
+            box-shadow: 0 2px 4px rgba(0,196,140,0.3);
+        }
+        
+        
+        /* 建议和分析区域 */
+        .analysis-card {
+            background: #FFFFFF;
+            border: 1px solid #E8E8E8;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+        
+        .analysis-content {
+            font-size: 15px;
+            color: #4A4A4A;
+            line-height: 1.8;
+        }
+        
+        .strength-list, .improvement-list {
+            margin-top: 16px;
+            padding-left: 20px;
+        }
+        
+        .strength-item, .improvement-item {
+            margin-bottom: 8px;
+        }
+        
+        .strength-item::marker {
+            color: #00C48C;
+        }
+        
+        .improvement-item::marker {
+            color: #FF4D4F;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .competency-radar-page {
+                padding: 16px;
+            }
+            
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            
+            .radar-chart {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .radar-legend {
+                gap: 16px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .radar-chart {
+                width: 200px;
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="competency-radar-page">
+            <!-- 页面头部 -->
+            <div class="page-header">
+                <h1 class="page-title">胜任力雷达图</h1>
+                <p class="page-subtitle">您的牙周临床能力综合评估</p>
+            </div>
+            
+            <!-- 内容区域 -->
+            <div class="content-area">
+                <!-- 学员基本信息和胜任力雷达图 -->
+                <div class="info-radar-card">
+                    <div class="card-title">学员基本信息及牙周临床胜任力雷达图</div>
+                    <div class="info-radar-content">
+                        <div class="student-info-section">
+                            <div class="avatar-section">
+                                <div class="avatar">刘</div>
+                                <div class="student-name">刘婧怡</div>
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">学号</span>
+                                    <span class="info-value">2021303042007</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">评估日期</span>
+                                    <span class="info-value">2025-05-08</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">综合得分</span>
+                                    <span class="info-value score-value">91分</span>
+                                </div>
+                            </div>
+                            <div class="score-breakdown">
+                                <div class="score-item">
+                                    <span class="score-name">基础知识</span>
+                                    <span class="score-num">100</span>
+                                </div>
+                                <div class="score-item">
+                                    <span class="score-name">临床思维</span>
+                                    <span class="score-num">97</span>
+                                </div>
+                                <div class="score-item">
+                                    <span class="score-name">临床操作</span>
+                                    <span class="score-num">92</span>
+                                </div>
+                                <div class="score-item">
+                                    <span class="score-name">医患沟通</span>
+                                    <span class="score-num">85</span>
+                                </div>
+                                <div class="score-item">
+                                    <span class="score-name">素养与创新</span>
+                                    <span class="score-num">81</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="radar-section">
+                            <div class="radar-container">
+                                <div class="radar-chart">
+                                    <svg width="380" height="380" viewBox="0 0 400 400">
+                                        <defs>
+                                            <linearGradient id="radarGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                <stop offset="0%" style="stop-color:#00C48C;stop-opacity:0.6" />
+                                                <stop offset="100%" style="stop-color:#00C48C;stop-opacity:0.2" />
+                                            </linearGradient>
+                                        </defs>
+                                        <!-- 网格线 -->
+                                        <g class="radar-grid">
+                                            <!-- 外圈 100% -->
+                                            <polygon points="200,100 343,223 294,357 106,357 57,223" fill="none" stroke="#CCCCCC" stroke-width="1.5"/>
+                                            <!-- 中圈 75% -->
+                                            <polygon points="200,137 307,250 271,328 129,328 93,250" fill="none" stroke="#DDDDDD" stroke-width="1"/>
+                                            <!-- 内圈 50% -->
+                                            <polygon points="200,175 271,278 247,300 153,300 129,278" fill="none" stroke="#EEEEEE" stroke-width="1"/>
+                                            <!-- 内圈 25% -->
+                                            <polygon points="200,212 235,305 222,314 178,314 165,305" fill="none" stroke="#EEEEEE" stroke-width="1"/>
+                                            
+                                            <!-- 坐标轴线 -->
+                                            <line x1="200" y1="250" x2="200" y2="100" stroke="#BBBBBB" stroke-width="1"/>
+                                            <line x1="200" y1="250" x2="343" y2="223" stroke="#BBBBBB" stroke-width="1"/>
+                                            <line x1="200" y1="250" x2="294" y2="357" stroke="#BBBBBB" stroke-width="1"/>
+                                            <line x1="200" y1="250" x2="106" y2="357" stroke="#BBBBBB" stroke-width="1"/>
+                                            <line x1="200" y1="250" x2="57" y2="223" stroke="#BBBBBB" stroke-width="1"/>
+                                        </g>
+                                        
+                                        <!-- 雷达图数据 -->
+                                        <polygon class="radar-polygon" points="200,100 338,224 287,348 120,341 79,224"/>
+                                        
+                                        <!-- 维度标签 -->
+                                        <text x="200" y="80" class="radar-label">基础知识 (100)</text>
+                                        <text x="360" y="220" class="radar-label">临床思维 (97)</text>
+                                        <text x="295" y="375" class="radar-label">临床操作 (92)</text>
+                                        <text x="100" y="375" class="radar-label">医患沟通 (85)</text>
+                                        <text x="55" y="220" class="radar-label">素养与创新 (81)</text>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 建议和分析区域 -->
+                <div class="analysis-card">
+                    <div class="card-title">建议和分析</div>
+                    <div class="analysis-content">
+                        <p>根据您的胜任力雷达图分析，您在牙周临床能力方面表现优异，综合得分91分。</p>
+                        
+                        <div class="strength-list">
+                            <strong>优势领域：</strong>
+                            <ul>
+                                <li class="strength-item">基础知识扎实，理论掌握全面</li>
+                                <li class="strength-item">临床思维清晰，诊断能力突出</li>
+                                <li class="strength-item">操作技能熟练，技术水平稳定</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="improvement-list">
+                            <strong>提升建议：</strong>
+                            <ul>
+                                <li class="improvement-item">加强医患沟通技巧，提升患者满意度</li>
+                                <li class="improvement-item">培养创新思维，关注前沿技术发展</li>
+                                <li class="improvement-item">参与更多临床实践，积累经验</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref } = Vue;
+        
+        const app = createApp({
+            setup() {
+                // 雷达图数据
+                const competencyData = ref([
+                    { name: '基础知识', score: 100, maxScore: 100 },
+                    { name: '临床思维', score: 97, maxScore: 100 },
+                    { name: '临床操作', score: 92, maxScore: 100 },
+                    { name: '医患沟通', score: 85, maxScore: 100 },
+                    { name: '素养与创新', score: 81, maxScore: 100 }
+                ]);
+                
+                // 学员信息
+                const studentInfo = ref({
+                    name: '刘婧怡',
+                    studentId: '2021303042007',
+                    date: '2025-05-08 11:32:27',
+                    totalScore: 91
+                });
+                
+                return {
+                    competencyData,
+                    studentInfo
+                };
+            }
+        });
+        
+        app.mount('#app');
+    </script>
+</body>
+</html>

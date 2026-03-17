@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>案例讨论课学情报告 - 牙周智慧教学平台</title>
+    
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    
+    <!-- Element Plus CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
+    <script src="https://unpkg.com/element-plus"></script>
+    
+    <!-- 全局样式 -->
+    <link rel="stylesheet" href="../styles/global.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #F5F7FA;
+            color: #2D3E50;
+            line-height: 1.5;
+        }
+        
+        .case-report-page {
+            min-height: 100vh;
+            padding: 24px;
+        }
+        
+        /* 页面头部 */
+        .page-header {
+            margin-bottom: 24px;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2D3E50;
+            margin-bottom: 8px;
+        }
+        
+        .page-subtitle {
+            font-size: 16px;
+            color: #666666;
+        }
+        
+        /* 内容区域 */
+        .content-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* 统计卡片 */
+        .stats-card {
+            background: #FFFFFF;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2D3E50;
+            margin-bottom: 16px;
+            padding-left: 12px;
+            border-left: 3px solid #00C48C;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 16px;
+            background: #F8F9FA;
+            border-radius: 8px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #00C48C;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666666;
+        }
+        
+        /* 最难问题 */
+        .difficult-question {
+            background: #FFF7E6;
+            border: 1px solid #FFD591;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        
+        .difficult-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #D46B08;
+            margin-bottom: 8px;
+        }
+        
+        .difficult-content {
+            font-size: 14px;
+            color: #D46B08;
+        }
+        
+        /* 成绩分析 */
+        .score-analysis {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+        }
+        
+        .score-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px;
+            background: #F6FFED;
+            border: 1px solid #B7EB8F;
+            border-radius: 6px;
+        }
+        
+        .score-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #52C41A;
+        }
+        
+        .score-label {
+            font-size: 12px;
+            color: #52C41A;
+        }
+        
+        /* 雷达图卡片 */
+        .radar-card {
+            background: #FFFFFF;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 24px;
+            grid-column: 1 / -1;
+        }
+        
+        .radar-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+        
+        .radar-chart {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+        
+        .radar-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .radar-polygon {
+            fill: rgba(24, 144, 255, 0.3);
+            stroke: #1890FF;
+            stroke-width: 2;
+        }
+        
+        .radar-axis {
+            stroke: #E0E0E0;
+            stroke-width: 1;
+        }
+        
+        .radar-label {
+            font-size: 14px;
+            color: #2D3E50;
+            text-anchor: middle;
+        }
+        
+        .radar-score {
+            font-size: 12px;
+            color: #00C48C;
+            text-anchor: middle;
+        }
+        
+        .radar-stats {
+            font-size: 12px;
+            color: #1890FF;
+            text-anchor: middle;
+            font-weight: bold;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .content-area {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .score-analysis {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .radar-chart {
+                width: 250px;
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="case-report-page">
+            <!-- 页面头部 -->
+            <div class="page-header">
+                <h1 class="page-title">案例讨论课学情报告</h1>
+                <p class="page-subtitle">班级案例讨论课学习情况统计分析</p>
+            </div>
+            
+            <!-- 内容区域 -->
+            <div class="content-area">
+                <!-- 统计信息卡片 -->
+                <div class="stats-card">
+                    <div class="card-title">课程概况</div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value">41.67%</div>
+                            <div class="stat-label">平均通过率（≥80分）</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">76.58</div>
+                            <div class="stat-label">平均分</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">24</div>
+                            <div class="stat-label">总参与人</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">1</div>
+                            <div class="stat-label">最难问题数量</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 最难问题 -->
+                    <div class="difficult-question">
+                        <div class="difficult-title">最难问题</div>
+                        <div class="difficult-content">牙周个性化方案制定</div>
+                    </div>
+                </div>
+                
+                <!-- 成绩分析卡片 -->
+                <div class="stats-card">
+                    <div class="card-title">成绩分析</div>
+                    <div class="score-analysis">
+                        <div class="score-item">
+                            <div class="score-value">97</div>
+                            <div class="score-label">最高分</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-value">62</div>
+                            <div class="score-label">最低分</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-value">76.58</div>
+                            <div class="score-label">平均分</div>
+                        </div>
+                    </div>
+                    <div class="radar-container" style="margin-top: 20px;">
+                        <div class="radar-chart">
+                            <svg width="300" height="300" viewBox="0 0 300 300">
+                                <!-- 网格线 -->
+                                <g class="radar-grid">
+                                    <!-- 等边三角形网格 -->
+                                    <polygon points="150,50 280,200 20,200" fill="none" stroke="#CCCCCC" stroke-width="1.5"/>
+                                    <polygon points="150,100 230,200 70,200" fill="none" stroke="#DDDDDD" stroke-width="1"/>
+                                    <polygon points="150,150 180,200 120,200" fill="none" stroke="#EEEEEE" stroke-width="1"/>
+                                    
+                                    <!-- 坐标轴 -->
+                                    <line x1="150" y1="50" x2="150" y2="200" stroke="#BBBBBB" stroke-width="1"/>
+                                    <line x1="250" y1="200" x2="250" y2="200" stroke="#BBBBBB" stroke-width="1"/>
+                                    <line x1="150" y1="200" x2="35" y2="200" stroke="#BBBBBB" stroke-width="1"/>
+                                </g>
+                                
+                                <!-- 雷达图数据 -->
+                                <polygon class="radar-polygon" :points="radarPoints"/>
+                                
+                                <!-- 维度标签 -->
+                                <text x="150" y="30" class="radar-label">最高分</text>
+                                <text x="150" y="45" class="radar-score">{{ maxScore }}</text>
+                                
+                                <text x="250" y="140" class="radar-label">平均分</text>
+                                <text x="250" y="155" class="radar-score">{{ avgScore }}</text>
+                                
+                                <text x="50" y="140" class="radar-label">最低分</text>
+                                <text x="50" y="155" class="radar-score">{{ minScore }}</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref, computed, onMounted } = Vue;
+        
+        const app = createApp({
+            setup() {
+                // 雷达图数据
+                const radarData = ref([
+                    { name: '知识掌握', score: 85, maxScore: 100 },
+                    { name: '分析能力', score: 78, maxScore: 100 },
+                    { name: '方案制定', score: 65, maxScore: 100 },
+                    { name: '表达能力', score: 82, maxScore: 100 },
+                    { name: '团队协作', score: 75, maxScore: 100 },
+                    { name: '创新思维', score: 70, maxScore: 100 }
+                ]);
+                
+                // 计算统计数据
+                const maxScore = computed(() => Math.max(...radarData.value.map(item => item.score)));
+                const minScore = computed(() => Math.min(...radarData.value.map(item => item.score)));
+                const avgScore = computed(() => {
+                    const sum = radarData.value.reduce((acc, item) => acc + item.score, 0);
+                    return (sum / radarData.value.length).toFixed(1);
+                });
+                
+                // 计算雷达图坐标点
+                const radarPoints = computed(() => {
+                    const centerX = 150;
+                    const centerY = 200;
+                    const topRadius = 150;
+                    const sideRadius = 130;
+                    
+                    const maxRatio = maxScore.value / 100;
+                    const avgRatio = parseFloat(avgScore.value) / 100;
+                    const minRatio = minScore.value / 100;
+                    
+                    const topY = centerY - topRadius * maxRatio;
+                    const rightX = centerX + sideRadius * avgRatio;
+                    const leftX = centerX - sideRadius * minRatio;
+                    
+                    return `${centerX},${topY} ${rightX},${centerY} ${leftX},${centerY}`;
+                });
+                
+                // 更新雷达图
+                onMounted(() => {
+                    const radarPolygon = document.querySelector('.radar-polygon');
+                    if (radarPolygon) {
+                        radarPolygon.setAttribute('points', radarPoints.value);
+                    }
+                });
+                
+                return {
+                    radarData,
+                    maxScore,
+                    minScore,
+                    avgScore
+                };
+            }
+        });
+        
+        app.mount('#app');
+    </script>
+</body>
+</html>
