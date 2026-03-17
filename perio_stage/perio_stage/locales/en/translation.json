@@ -1,0 +1,174 @@
+{
+  "title": "Periodontal Staging and Grading Diagnostic Tool",
+  "subtitle": "Based on the 2018 International Classification of Periodontal and Peri-implant Diseases",
+  "meta": {
+    "description": "Periodontal staging and grading diagnostic tool, based on the 2018 International Classification of Periodontal and Peri-implant Diseases, originally developed by Huan Liu from Wuhan University School and Hospital of Stomatology.",
+    "alt": {
+      "tooth_icon": "Tooth Icon"
+    }
+  },
+  "tabs": {
+    "diagnosis": "Diagnostic Tool",
+    "flowchart": "Flowchart",
+    "about": "About Classification"
+  },
+  "diagnosis": {
+    "title": "Periodontal Diagnosis",
+    "staging": {
+      "title": "Staging Diagnosis",
+      "cal": "Clinical Attachment Loss (CAL):",
+      "cal_options": {
+        "1-2": "1-2mm",
+        "3-4": "3-4mm",
+        ">=5": "≥5mm"
+      },
+      "bone_loss": "Bone Loss Level:",
+      "bone_loss_options": {
+        "<15%": "<15%",
+        "15-30%": "15%-30%",
+        ">30%": "≥30%"
+      },
+      "pd": "Probing Depth (PD):",
+      "pd_options": {
+        "<=4": "≤4mm",
+        "5-6": "5-6mm",
+        ">=7": "≥7mm"
+      },
+      "furcation": "Furcation Involvement:",
+      "furcation_options": {
+        "none": "None",
+        "grade1": "Grade I",
+        "grade2": "Grade II",
+        "grade3": "Grade III"
+      },
+      "tooth_loss": "Tooth Loss due to Periodontitis:",
+      "tooth_loss_options": {
+        "yes": "Yes",
+        "no": "No"
+      },
+      "opposing_teeth": "Tooth Mobility/Migration:",
+      "opposing_teeth_options": {
+        "yes": "Yes",
+        "no": "No"
+      },
+      "complications": "Complications (Bite Collapse, Drifting, Spacing):",
+      "complications_options": {
+        "yes": "Yes",
+        "no": "No"
+      },
+      "severe_ridge": "Severe Ridge Defects:",
+      "severe_ridge_options": {
+        "yes": "Yes",
+        "no": "No"
+      }
+    },
+    "grading": {
+      "title": "Grading Diagnosis",
+      "progression": "History of Periodontal Treatment >5 years:",
+      "progression_options": {
+        "yes": "Yes",
+        "no": "No"
+      },
+      "five_year_loss": "5-year Radiographic Bone Loss or CAL:",
+      "five_year_loss_options": {
+        "none": "No Loss",
+        "<2mm": "<2mm",
+        ">=2mm": "≥2mm"
+      },
+      "bone_loss_age": "Bone Loss %/Age Ratio:",
+      "bone_loss_age_options": {
+        "<0.25%": "<0.25%",
+        "0.25-1.0%": "0.25%-1.0%",
+        ">1.0%": ">1.0%"
+      },
+      "smoking": "Smoking:",
+      "smoking_options": {
+        "none": "Non-smoker",
+        "light": "Light (<10 cigarettes/day)",
+        "heavy": "Heavy (≥10 cigarettes/day)"
+      },
+      "diabetes": "Diabetes:",
+      "diabetes_options": {
+        "none": "No Diabetes",
+        "controlled": "Well-controlled (HbA1c<7%)",
+        "uncontrolled": "Poorly controlled (HbA1c≥7%)"
+      }
+    },
+    "buttons": {
+      "select": "Please select",
+      "diagnose": "Diagnose"
+    },
+    "results": {
+      "title": "Diagnosis Results",
+      "stage": "Stage:",
+      "grade": "Grade:",
+      "explanation": "Diagnostic Basis:",
+      "stage1": "Stage I",
+      "stage2": "Stage II",
+      "stage3": "Stage III",
+      "stage4": "Stage IV",
+      "gradeA": "Grade A",
+      "gradeB": "Grade B",
+      "gradeC": "Grade C",
+      "stage1_desc": "Initial periodontitis: CAL 1-2mm, bone loss <15%",
+      "stage2_desc": "Moderate periodontitis: CAL 3-4mm, bone loss 15-30%",
+      "stage3_desc": "Severe periodontitis: CAL ≥5mm, bone loss >30%, possible furcation involvement",
+      "stage4_desc": "Advanced periodontitis: In addition to Stage III features, tooth loss or mobility",
+      "gradeA_desc": "Slow progression: bone loss <0.5mm in 5 years",
+      "gradeB_desc": "Moderate progression: bone loss 0.5-1.0mm in 5 years",
+      "gradeC_desc": "Rapid progression: bone loss >1.0mm in 5 years"
+    }
+  },
+  "flowchart": {
+    "title": "Periodontal Staging and Grading Flowchart",
+    "staging_title": "Staging Flowchart",
+    "grading_title": "Grading Flowchart",
+    "svg_not_supported": "Your browser does not support SVG images"
+  },
+  "about": {
+    "title": "About Periodontal Staging and Grading System",
+    "intro": "In 2018, the World Workshop on the Classification of Periodontal and Peri-implant Diseases and Conditions released a new classification system for periodontal and peri-implant diseases. This system introduced the concepts of staging and grading for periodontitis to more comprehensively assess disease severity, complexity, and progression risk.",
+    "staging": {
+      "title": "Staging",
+      "description": "Staging primarily reflects disease severity and complexity, divided into four stages I, II, III, and IV:",
+      "stage1": {
+        "title": "Stage I",
+        "desc": "Initial periodontitis, CAL 1-2mm, bone loss <15%"
+      },
+      "stage2": {
+        "title": "Stage II",
+        "desc": "Moderate periodontitis, CAL 3-4mm, bone loss 15%-30%"
+      },
+      "stage3": {
+        "title": "Stage III",
+        "desc": "Severe periodontitis, CAL ≥5mm, bone loss >30%, tooth loss ≤4 due to periodontitis"
+      },
+      "stage4": {
+        "title": "Stage IV",
+        "desc": "Advanced periodontitis, CAL ≥5mm, bone loss >30%, tooth loss >4 due to periodontitis, may require complex rehabilitation"
+      }
+    },
+    "grading": {
+      "title": "Grading",
+      "description": "Grading primarily reflects disease progression rate and risk factors, divided into three grades A, B, and C:",
+      "gradeA": {
+        "title": "Grade A",
+        "desc": "Slow progression, no risk factors"
+      },
+      "gradeB": {
+        "title": "Grade B",
+        "desc": "Moderate progression, mild risk factors"
+      },
+      "gradeC": {
+        "title": "Grade C",
+        "desc": "Rapid progression, severe risk factors"
+      },
+      "factors": "Grading is primarily based on evidence of disease progression over the past 5 years or bone loss/age ratio, considering risk factors such as smoking and diabetes."
+    }
+  },
+  "footer": {
+    "copyright": "© 2024 Periodontal Staging and Grading Diagnostic Tool | Based on 2018 International Classification of Periodontal and Peri-implant Diseases",
+    "author": "Original Design and Development: Huan Liu | Wuhan University School and Hospital of Stomatology",
+    "rights": "All rights reserved | Version 1.0.0"
+  }
+} 
